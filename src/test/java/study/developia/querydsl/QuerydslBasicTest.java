@@ -22,8 +22,13 @@ public class QuerydslBasicTest {
     @Autowired
     EntityManager em;
 
+    JPAQueryFactory queryFactory;
+
     @BeforeEach
     void before() {
+        // 멀티스레드 환경에서도 동시성 문제 없이 사용할 수 있도록 보장
+        queryFactory = new JPAQueryFactory(em);
+
         Team teamA = new Team("teamA");
         Team teamB = new Team("teamB");
         em.persist(teamA);
@@ -55,7 +60,6 @@ public class QuerydslBasicTest {
 
     @Test
     void startQuerydsl(){
-        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
         QMember m = new QMember("m");
 
         Member findMember = queryFactory.select(m)
