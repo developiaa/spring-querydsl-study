@@ -63,7 +63,7 @@ public class QuerydslBasicTest {
     }
 
     @Test
-    void startQuerydsl(){
+    void startQuerydsl() {
 //        QMember m = QMember.member;
 
         Member findMember = queryFactory.select(member)
@@ -75,7 +75,7 @@ public class QuerydslBasicTest {
     }
 
     @Test
-    void search(){
+    void search() {
         Member findMember = queryFactory
                 .selectFrom(member)
                 .where(member.username.eq("member1").and(member.age.eq(10)))
@@ -85,7 +85,7 @@ public class QuerydslBasicTest {
     }
 
     @Test
-    void searchAndParam(){
+    void searchAndParam() {
         Member findMember = queryFactory
                 .selectFrom(member)
                 .where(
@@ -99,7 +99,7 @@ public class QuerydslBasicTest {
     }
 
     @Test
-    void resultFetch(){
+    void resultFetch() {
         List<Member> fetch = queryFactory.selectFrom(member)
                 .fetch();
 
@@ -125,7 +125,7 @@ public class QuerydslBasicTest {
      * 단 2에서 회원 이름이 없으면 마지막에 출력(nulls last)
      */
     @Test
-    void sort(){
+    void sort() {
         em.persist(new Member(null, 100));
         em.persist(new Member("member5", 100));
         em.persist(new Member("member6", 100));
@@ -145,6 +145,33 @@ public class QuerydslBasicTest {
         assertThat(member6.getUsername()).isEqualTo("member6");
         assertThat(memberNull.getUsername()).isNull();
 
+    }
+
+    @Test
+    void paging1() {
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .orderBy(member.username.desc())
+                .offset(1)
+                .limit(2)
+                .fetch();
+
+        assertThat(result.size()).isEqualTo(2);
+    }
+
+    @Test
+    void paging2() {
+        QueryResults<Member> queryResults = queryFactory
+                .selectFrom(member)
+                .orderBy(member.username.desc())
+                .offset(1)
+                .limit(2)
+                .fetchResults();
+
+        assertThat(queryResults.getTotal()).isEqualTo(4);
+        assertThat(queryResults.getLimit()).isEqualTo(2);
+        assertThat(queryResults.getOffset()).isEqualTo(1);
+        assertThat(queryResults.getResults().size()).isEqualTo(2);
     }
 
 }
