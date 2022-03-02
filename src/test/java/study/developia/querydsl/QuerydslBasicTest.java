@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import study.developia.querydsl.dto.MemberDto;
+import study.developia.querydsl.dto.QMemberDto;
 import study.developia.querydsl.dto.UserDto;
 import study.developia.querydsl.entity.Member;
 import study.developia.querydsl.entity.QMember;
@@ -596,6 +597,22 @@ public class QuerydslBasicTest {
 
         for (UserDto userDto : result) {
             System.out.println("userDto = " + userDto);
+        }
+    }
+
+    @Test
+    void findDtoByQueryProjection() {
+        // constructor와의 차이점은 constructor는 런타임에서 체크 가능하지만
+        // QueryProjection은 컴파일시점에서 오류를 잡아낼 수 있다.
+        // 단점은 Q 파일을 생성해주어야하는 것과 querydsl에 의존성을 지닌다.
+        List<MemberDto> result = queryFactory
+                .select(new QMemberDto(
+                        member.username, member.age))
+                .from(member)
+                .fetch();
+
+        for (MemberDto memberDto : result) {
+            System.out.println("memberDto = " + memberDto);
         }
     }
 
