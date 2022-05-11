@@ -171,9 +171,7 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport implements M
                         teamNameEq(condition.getTeamName()),
                         ageGoe(condition.getAgeGoe()),
                         ageLoe(condition.getAgeLoe())
-                )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                );
 
         // count 최적화
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetch().size());
